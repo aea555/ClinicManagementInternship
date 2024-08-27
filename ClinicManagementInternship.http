@@ -1,0 +1,6 @@
+@ClinicManagementInternship_HostAddress = http://localhost:5122
+
+GET {{ClinicManagementInternship_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
