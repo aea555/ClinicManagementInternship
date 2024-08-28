@@ -48,7 +48,6 @@ namespace ClinicManagementInternship.Templates
             try
             {
                 TEntity entity = GenericService<TCreateDto, TUpdateDto, TEntity>.MapCreateDtoToEntity(createDto);
-                Console.WriteLine(entity);
 
                 var result = await _repository.CreateAsync(entity);
 

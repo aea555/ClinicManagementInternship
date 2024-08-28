@@ -14,5 +14,6 @@ namespace ClinicManagementInternship.Models
         public Appointment? Appointment { get; set; }
         public required int Rating { get; set; }
         public string? Comment { get; set; }
+        public bool? Deleted { get; set; }
     }
 }

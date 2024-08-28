@@ -3,7 +3,7 @@ using ClinicManagementInternship.Templates;
 
 namespace ClinicManagementInternship.Services.PrescriptionDrug
 {
-    public interface IPrescritpionDrugService : IGenericService<CreatePrescriptionDrug, UpdatePrescriptionDrug, Models.PrescriptionDrug>
+    public interface IPrescriptionDrugService : IGenericService<CreatePrescriptionDrug, UpdatePrescriptionDrug, Models.PrescriptionDrug>
     {
     }
 }

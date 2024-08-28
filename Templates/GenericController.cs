@@ -6,19 +6,14 @@ namespace ClinicManagementInternship.Templates
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GenericController<TCreateDto, TUpdateDto, TClass> : ControllerBase
+    public class GenericController<TCreateDto, TUpdateDto, TClass>(IGenericService<TCreateDto, TUpdateDto, TClass> service) : ControllerBase
     where TCreateDto : GenericDTO
     where TUpdateDto : GenericUpdateDTO
     {
-        private readonly IGenericService<TCreateDto, TUpdateDto, TClass> _service;
-
-        public GenericController(IGenericService<TCreateDto, TUpdateDto, TClass> service)
-        {
-            _service = service;
-        }
+        private readonly IGenericService<TCreateDto, TUpdateDto, TClass> _service = service;
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,PATIENT,DOCTOR,BIOCHEMIST")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> GetById(int id)
         {
             var response = await _service.GetById(id);
@@ -33,7 +28,7 @@ namespace ClinicManagementInternship.Templates
             return HandleResponse(response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "ADMIN")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> Update([FromBody] TUpdateDto dto)
         {
@@ -50,7 +45,7 @@ namespace ClinicManagementInternship.Templates
         }
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,PATIENT,DOCTOR,BIOCHEMIST")]
         public async virtual Task<ActionResult<ServiceResult<List<TClass>>>> GetAll()
         {
             var response = await _service.GetAll();
