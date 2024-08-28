@@ -8,6 +8,6 @@ namespace ClinicManagementInternship.Models
         public int Id { get; set; }
         public required int ClinicId { get; set; }
         public Clinic? Clinic { get; set; }
-        public int Number { get; set; }
+        public required int Number { get; set; }
     }
 }

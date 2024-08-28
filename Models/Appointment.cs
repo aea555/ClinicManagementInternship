@@ -16,7 +16,7 @@ namespace ClinicManagementInternship.Models
         public AppointmentStatus AppointmentStatus { get; set; }
         public required DateTime StartTime { get; set; }
         public required DateTime FinishTime { get; set; }
-        public required DateTime CompleteTime { get; set; }
+        public DateTime CompleteTime { get; set; }
         public string? Notes { get; set; }
 
     }

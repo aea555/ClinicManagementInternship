@@ -1,18 +1,14 @@
 ﻿using ClinicManagementInternship.Enums;
-using System.ComponentModel.DataAnnotations;
+using ClinicManagementInternship.Templates;
 
-namespace ClinicManagementInternship.Models
+namespace ClinicManagementInternship.Dto.AppointmentTestResult
 {
-    public class AppointmentTestResult
+    public class CreateAppointmentTestResult : GenericDTO
     {
-        [Key]
-        public int Id { get; set; }
         public required int AppointmentTestId { get; set; }
-        public AppointmentTest? AppointmentTest { get; set; }
         public required DateTime ResultDate { get; set; }
         public required decimal Value { get; set; }
         public required int BiochemistId { get; set; }
-        public Biochemist? Biochemist { get; set; }
         public required ResultFlag ResultFlag { get; set; }
     }
 }

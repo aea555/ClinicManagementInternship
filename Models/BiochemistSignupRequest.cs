@@ -12,6 +12,6 @@ namespace ClinicManagementInternship.Models
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
         public required DateTime SubmissionDate { get; set; }
-        public SignUpRequest SignUpRequest { get; set; }
+        public required SignUpRequestStatus SignUpRequest { get; set; }
     }
 }

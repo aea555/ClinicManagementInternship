@@ -1,10 +1,13 @@
-﻿using System.Linq.Expressions;
+﻿using ClinicManagementInternship.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace ClinicManagementInternship.Templates
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         private readonly DataContext _context;
+        private DataContext context;
 
         public GenericRepository(DataContext context)
         {

@@ -1,6 +1,6 @@
 ﻿namespace ClinicManagementInternship.Enums
 {
-    public enum SignUpRequest
+    public enum SignUpRequestStatus
     {
         PENDING,
         ACCEPTED,
