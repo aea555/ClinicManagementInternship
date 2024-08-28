@@ -30,12 +30,12 @@ namespace ClinicManagementInternship.Templates
                     Data = entity
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new ServiceResult<TEntity>
                 {
                     Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
+                    ErrorMessage = "An unexpected error occurred. During getting " + nameof(TEntity) + " caused by: " + e.Message,
                     StatusCode = 500
                 };
             }
@@ -57,12 +57,12 @@ namespace ClinicManagementInternship.Templates
                     Data = result
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new ServiceResult<TEntity>
                 {
                     Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
+                    ErrorMessage = "An unexpected error occurred. During creating " + nameof(TEntity) + " caused by: " + e.Message,
                     StatusCode = 500
                 };
             }
@@ -94,12 +94,12 @@ namespace ClinicManagementInternship.Templates
                     Data = result
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new ServiceResult<TEntity>
                 {
                     Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
+                    ErrorMessage = "An unexpected error occurred. During updating " + nameof(TEntity) + " caused by: " + e.Message,
                     StatusCode = 500
                 };
             }
@@ -126,12 +126,12 @@ namespace ClinicManagementInternship.Templates
                     Message = $"{typeof(TEntity).Name} with ID {id} deleted successfully."
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new ServiceResult<string>
                 {
                     Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
+                    ErrorMessage = "An unexpected error occurred. During deleting " + nameof(TEntity) + " caused by: " + e.Message,
                     StatusCode = 500
                 };
             }
@@ -149,12 +149,12 @@ namespace ClinicManagementInternship.Templates
                     Data = entities
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new ServiceResult<List<TEntity>>
                 {
                     Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
+                    ErrorMessage = "An unexpected error occurred. During getting all " + nameof(TEntity) + " caused by: " + e.Message,
                     StatusCode = 500
                 };
             }

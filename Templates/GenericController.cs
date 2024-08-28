@@ -58,7 +58,7 @@ namespace ClinicManagementInternship.Templates
             {
                 return Ok(response);
             }
-            return StatusCode(response.StatusCode, response.Message);
+            return StatusCode(response.StatusCode, response.ErrorMessage);
         }
     }
 }

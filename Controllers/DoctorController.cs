@@ -16,7 +16,7 @@ namespace ClinicManagementInternship.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "ADMIN,DOCTOR")]
-        public async Task<ActionResult<ServiceResult<Doctor>>> UpdateDoctorName(int id, [FromBody] string FirstName, [FromBody] string LastName)
+        public async Task<ActionResult<ServiceResult<Doctor>>> UpdateDoctorName(int id, string FirstName, string LastName)
         {
             var response = await _service.UpdateDoctorName(id, FirstName, LastName);
             return HandleResponse(response);

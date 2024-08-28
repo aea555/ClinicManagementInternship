@@ -9,13 +9,13 @@ namespace ClinicManagementInternship.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IAccountService service) : GenericController<CreateAccount, UpdateAccount, ReturnAccount>(service)
+    public class AccountController(IAccountService service) : GenericController<CreateAccount, UpdateAccount, Models.Account>(service)
     {
         private readonly IAccountService _service = service;
 
         [HttpPost]
         [AllowAnonymous]
-        public override async Task<ActionResult<ServiceResult<ReturnAccount>>> CreateNew([Microsoft.AspNetCore.Mvc.FromBody] CreateAccount createDto)
+        public override async Task<ActionResult<ServiceResult<Models.Account>>> CreateNew([Microsoft.AspNetCore.Mvc.FromBody] CreateAccount createDto)
         {
             var response = await _service.CreateNew(createDto);
             return HandleResponse(response);
