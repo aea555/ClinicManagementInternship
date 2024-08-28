@@ -15,7 +15,7 @@ namespace ClinicManagementInternship.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public override async Task<ActionResult<ServiceResult<Models.Account>>> CreateNew([Microsoft.AspNetCore.Mvc.FromBody] CreateAccount createDto)
+        public override async Task<ActionResult<ServiceResult<Models.Account>>> CreateNew([FromBody] CreateAccount createDto)
         {
             var response = await _service.CreateNew(createDto);
             return HandleResponse(response);
