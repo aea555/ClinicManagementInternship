@@ -24,6 +24,10 @@ namespace ClinicManagementInternship.Templates
         [Authorize(Roles = "ADMIN")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> CreateNew([FromBody] TCreateDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var response = await _service.CreateNew(dto);
             return HandleResponse(response);
         }
@@ -32,6 +36,10 @@ namespace ClinicManagementInternship.Templates
         [Authorize(Roles = "ADMIN")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> Update([FromBody] TUpdateDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var response = await _service.Update(dto);
             return HandleResponse(response);
         }
