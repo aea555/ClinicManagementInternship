@@ -1,4 +1,5 @@
 using ClinicManagementInternship.Data;
+using ClinicManagementInternship.Models;
 using ClinicManagementInternship.Services.Account;
 using ClinicManagementInternship.Services.Admin;
 using ClinicManagementInternship.Services.Appointment;
@@ -26,8 +27,27 @@ using System.Text;
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-//Repo
+//Repos
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IGenericRepository<Account>, GenericRepository<Account>>();
+builder.Services.AddScoped<IGenericRepository<Admin>, GenericRepository<Admin>>();
+builder.Services.AddScoped<IGenericRepository<Appointment>, GenericRepository<Appointment>>();
+builder.Services.AddScoped<IGenericRepository<AppointmentTest>, GenericRepository<AppointmentTest>>();
+builder.Services.AddScoped<IGenericRepository<AppointmentTestResult>, GenericRepository<AppointmentTestResult>>();
+builder.Services.AddScoped<IGenericRepository<Biochemist>, GenericRepository<Biochemist>>();
+builder.Services.AddScoped<IGenericRepository<BiochemistSignupRequest>, GenericRepository<BiochemistSignupRequest>>();
+builder.Services.AddScoped<IGenericRepository<Clinic>, GenericRepository<Clinic>>();
+builder.Services.AddScoped<IGenericRepository<ClinicRoom>, GenericRepository<ClinicRoom>>();
+builder.Services.AddScoped<IGenericRepository<Doctor>, GenericRepository<Doctor>>();
+builder.Services.AddScoped<IGenericRepository<DoctorSignupRequest>, GenericRepository<DoctorSignupRequest>>();
+builder.Services.AddScoped<IGenericRepository<Drug>, GenericRepository<Drug>>();
+builder.Services.AddScoped<IGenericRepository<Feedback>, GenericRepository<Feedback>>();
+builder.Services.AddScoped<IGenericRepository<Injection>, GenericRepository<Injection>>();
+builder.Services.AddScoped<IGenericRepository<Patient>, GenericRepository<Patient>>();
+builder.Services.AddScoped<IGenericRepository<Prescription>, GenericRepository<Prescription>>();
+builder.Services.AddScoped<IGenericRepository<PrescriptionDrug>, GenericRepository<PrescriptionDrug>>();
+builder.Services.AddScoped<IGenericRepository<Test>, GenericRepository<Test>>();
+
 
 //Services
 builder.Services.AddScoped<IAccountService, AccountService>();
