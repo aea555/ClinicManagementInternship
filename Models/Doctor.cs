@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ClinicManagementInternship.Models
 {
@@ -7,6 +8,7 @@ namespace ClinicManagementInternship.Models
         [Key]
         public int Id { get; set; }
         public required int AccountId { get; set; }
+        [JsonIgnore]
         public Account? Account { get; set; }
         public required int ClinicId { get; set; }
         public Clinic? Clinic { get; set; }
