@@ -90,7 +90,7 @@ builder.Services.AddAuthentication(options =>
         (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY"))),
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = false,
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true
     };
 });

@@ -15,7 +15,7 @@ namespace ClinicManagementInternship.Controllers
         [HttpPost("login")]
         public async Task<ServiceResult<string>> Login([FromBody] LoginRequest model)
         {
-            if (model.Email == null || model.Password == null)
+            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
             {
                 return new ServiceResult<string>
                 {
@@ -31,18 +31,8 @@ namespace ClinicManagementInternship.Controllers
                 return new ServiceResult<string>
                 {
                     Success = false,
-                    ErrorMessage = "Bad request.",
-                    StatusCode = 400
-                };
-            }
-
-            if (model.Password == null)
-            {
-                return new ServiceResult<string>
-                {
-                    Success = false,
-                    ErrorMessage = "Bad request.",
-                    StatusCode = 404
+                    ErrorMessage = "Email or password is incorrect.",
+                    StatusCode = 401
                 };
             }
 
@@ -58,13 +48,24 @@ namespace ClinicManagementInternship.Controllers
 
             var token = JwtManager.GenerateJwt(account, _configuration);
 
+            //var cookieOptions = new CookieOptions
+            //{
+            //    HttpOnly = true,
+            //    Secure = true,
+            //    SameSite = SameSiteMode.Strict,
+            //    Expires = DateTime.UtcNow.AddDays(7)
+            //};
+
+            //Response.Cookies.Append("jwt", token, cookieOptions);
+
             return new ServiceResult<string>
             {
                 Success = true,
-                Data = token,
-                StatusCode = 200
+                StatusCode = 200,
+                Data = token
             };
         }
+
     }
 
     public class LoginRequest
