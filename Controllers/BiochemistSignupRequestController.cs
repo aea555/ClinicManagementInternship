@@ -18,6 +18,11 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,NONE")]
         public override async Task<ActionResult<ServiceResult<BiochemistSignupRequest>>> CreateNew([FromBody] CreateBiochemistSignupRequest CreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.CreateNew(CreateDto);
             return HandleResponse(response);
         }

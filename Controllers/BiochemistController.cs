@@ -18,6 +18,11 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,BIOCHEMIST")]
         public override async Task<ActionResult<ServiceResult<Biochemist>>> Update([FromBody] UpdateBiochemist UpdateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.Update(UpdateDto);
             return HandleResponse(response);
         }

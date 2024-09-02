@@ -17,7 +17,27 @@ namespace ClinicManagementInternship.Controllers
         [AllowAnonymous]
         public override async Task<ActionResult<ServiceResult<Models.Account>>> CreateNew([FromBody] CreateAccount createDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.CreateNew(createDto);
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/GetRequestsOfAccount/{accountId}")]
+        [Authorize(Roles = "ADMIN,NONE")]
+        public async Task<ActionResult<ServiceResult<SignupRequestsResult>>> GetRequestsOfAccount(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var dto = new GetRequestAccountId { AccountId = accountId };
+
+            var response = await _service.GetRequestsOfAccount(dto);
             return HandleResponse(response);
         }
     }

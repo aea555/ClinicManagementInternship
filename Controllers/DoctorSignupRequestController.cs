@@ -18,8 +18,14 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,NONE")]
         public override async Task<ActionResult<ServiceResult<DoctorSignupRequest>>> CreateNew([FromBody] CreateDoctorSignupRequest CreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.CreateNew(CreateDto);
             return HandleResponse(response);
         }
+
     }
 }

@@ -21,7 +21,7 @@ namespace ClinicManagementInternship.Templates
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,NONE")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> CreateNew([FromBody] TCreateDto dto)
         {
             if (!ModelState.IsValid)

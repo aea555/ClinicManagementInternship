@@ -18,6 +18,11 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,DOCTOR")]
         public override async Task<ActionResult<ServiceResult<Injection>>> CreateNew([FromBody] CreateInjection CreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.CreateNew(CreateDto);
             return HandleResponse(response);
         }
@@ -26,6 +31,11 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,DOCTOR")]
         public override async Task<ActionResult<ServiceResult<Injection>>> Update([FromBody] UpdateInjection UpdateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.Update(UpdateDto);
             return HandleResponse(response);
         }

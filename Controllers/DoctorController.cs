@@ -18,6 +18,11 @@ namespace ClinicManagementInternship.Controllers
         [Authorize(Roles = "ADMIN,DOCTOR")]
         public async Task<ActionResult<ServiceResult<Doctor>>> UpdateDoctorName(int id, string FirstName, string LastName)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _service.UpdateDoctorName(id, FirstName, LastName);
             return HandleResponse(response);
         }

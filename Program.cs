@@ -90,7 +90,7 @@ builder.Services.AddAuthentication(options =>
         (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY"))),
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
+        ValidateLifetime = false,
         ValidateIssuerSigningKey = true
     };
 });
@@ -103,7 +103,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors(builder =>
 {
