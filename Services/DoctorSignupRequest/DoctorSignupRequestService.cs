@@ -1,5 +1,4 @@
 ﻿using ClinicManagementInternship.Data;
-using ClinicManagementInternship.Dto.Account;
 using ClinicManagementInternship.Dto.DoctorSignupRequest;
 using ClinicManagementInternship.Templates;
 using ClinicManagementInternship.Utils;
@@ -73,43 +72,6 @@ namespace ClinicManagementInternship.Services.DoctorSignupRequest
                         StatusCode = 400
                     };
                 }
-            }
-            catch (Exception)
-            {
-                return new ServiceResult<Models.DoctorSignupRequest>
-                {
-                    Success = false,
-                    ErrorMessage = "An unexpected error occurred.",
-                    StatusCode = 500
-                };
-            }
-        }
-
-        public async Task<ServiceResult<Models.DoctorSignupRequest>> GetRequestsOfAccount(GetRequestAccountId dto)
-        {
-            try
-            {
-                var existingAccount = await _context.Accounts.FindAsync(dto.AccountId);
-                if (existingAccount is null)
-                {
-                    return new ServiceResult<Models.DoctorSignupRequest>
-                    {
-                        Success = false,
-                        ErrorMessage = "Account doesn't exist.",
-                        StatusCode = 400
-                    };
-                }
-
-                var requests = await _context.DoctorSignupRequests.FirstOrDefaultAsync(dsr => dsr.AccountId == dto.AccountId &&
-                (dsr.SignUpRequest == Enums.SignUpRequestStatus.PENDING || dsr.SignUpRequest == Enums.SignUpRequestStatus.ACCEPTED));
-
-                return new ServiceResult<Models.DoctorSignupRequest>
-                {
-                    Success = true,
-                    Message = "Records found",
-                    Data = requests,
-                    StatusCode = 400
-                };
             }
             catch (Exception)
             {
