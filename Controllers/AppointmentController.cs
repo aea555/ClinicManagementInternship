@@ -26,7 +26,7 @@ namespace ClinicManagementInternship.Controllers
             return HandleResponse(response);
         }
 
-        [HttpDelete]
+        [HttpDelete("/api/Appointment/Cancel/{id}")]
         [Authorize(Roles = "ADMIN,PATIENT")]
         public async Task<ActionResult<ServiceResult<Models.Appointment>>> Cancel(int id)
         {

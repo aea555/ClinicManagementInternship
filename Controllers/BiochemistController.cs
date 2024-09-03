@@ -14,6 +14,19 @@ namespace ClinicManagementInternship.Controllers
     {
         private readonly IBiochemistService _service = service;
 
+        [HttpPost]
+        [Authorize(Roles = "ADMIN,NONE")]
+        public override async Task<ActionResult<ServiceResult<Models.Biochemist>>> CreateNew([FromBody] CreateBiochemist createDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.CreateNew(createDto);
+            return HandleResponse(response);
+        }
+
         [HttpPut]
         [Authorize(Roles = "ADMIN,BIOCHEMIST")]
         public override async Task<ActionResult<ServiceResult<Biochemist>>> Update([FromBody] UpdateBiochemist UpdateDto)

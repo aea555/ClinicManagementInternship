@@ -29,6 +29,8 @@ namespace ClinicManagementInternship.Services.Doctor
                     };
                 }
 
+                account.Role = Enums.AccountRole.DOCTOR;
+                await _context.SaveChangesAsync();
                 return await base.CreateNew(CreateDto);
             }
             else

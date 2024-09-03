@@ -29,6 +29,8 @@ namespace ClinicManagementInternship.Services.Biochemist
                     };
                 }
 
+                account.Role = Enums.AccountRole.BIOCHEMIST;
+                await _context.SaveChangesAsync();
                 return await base.CreateNew(CreateDto);
             }
             else

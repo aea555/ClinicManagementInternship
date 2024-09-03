@@ -26,6 +26,19 @@ namespace ClinicManagementInternship.Controllers
             return HandleResponse(response);
         }
 
+        [HttpPut]
+        [Authorize(Roles = "ADMIN,PATIENT,DOCTOR,BIOCHEMIST")]
+        public override async Task<ActionResult<ServiceResult<Models.Account>>> Update([FromBody] UpdateAccount updateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.Update(updateDto);
+            return HandleResponse(response);
+        }
+
         [HttpGet("/api/GetRequestsOfAccount/{accountId}")]
         [Authorize(Roles = "ADMIN,NONE")]
         public async Task<ActionResult<ServiceResult<SignupRequestsResult>>> GetRequestsOfAccount(int accountId)

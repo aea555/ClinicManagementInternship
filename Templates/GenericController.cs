@@ -21,7 +21,6 @@ namespace ClinicManagementInternship.Templates
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMIN")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> CreateNew([FromBody] TCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -33,7 +32,6 @@ namespace ClinicManagementInternship.Templates
         }
 
         [HttpPut]
-        [Authorize(Roles = "ADMIN")]
         public async virtual Task<ActionResult<ServiceResult<TClass>>> Update([FromBody] TUpdateDto dto)
         {
             if (!ModelState.IsValid)

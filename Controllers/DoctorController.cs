@@ -26,5 +26,31 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.UpdateDoctorName(id, FirstName, LastName);
             return HandleResponse(response);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "ADMIN")]
+        public override async Task<ActionResult<ServiceResult<Models.Doctor>>> CreateNew([FromBody] CreateDoctor createDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.CreateNew(createDto);
+            return HandleResponse(response);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "ADMIN")]
+        public override async Task<ActionResult<ServiceResult<Models.Doctor>>> Update([FromBody] UpdateDoctor updateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.Update(updateDto);
+            return HandleResponse(response);
+        }
     }
 }
