@@ -2,6 +2,7 @@
 using ClinicManagementInternship.Dto.Admin;
 using ClinicManagementInternship.Templates;
 using ClinicManagementInternship.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagementInternship.Services.Admin
 {
@@ -14,8 +15,8 @@ namespace ClinicManagementInternship.Services.Admin
             try
             {
                 var account = await _context.Accounts.FindAsync(CreateDto.AccountId);
-
-                if (account is not null)
+                var admin = await _context.Admins.FirstOrDefaultAsync(a => a.AccountId == CreateDto.AccountId);
+                if (account is not null && admin is null)
                 {
                     var response = await base.CreateNew(CreateDto);
                     account.Role = Enums.AccountRole.ADMIN;
@@ -27,7 +28,7 @@ namespace ClinicManagementInternship.Services.Admin
                     return new ServiceResult<Models.Admin>
                     {
                         Success = false,
-                        ErrorMessage = "Account doesn't exist.",
+                        ErrorMessage = "Invalid request.",
                         StatusCode = 400
                     };
                 }

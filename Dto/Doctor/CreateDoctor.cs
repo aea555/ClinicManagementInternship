@@ -6,6 +6,7 @@ namespace ClinicManagementInternship.Dto.Doctor
     public class CreateDoctor : GenericDTO
     {
         [ValidEntityId<Models.Account>("Accounts")]
+        [UniqueAccountIdValidation]
         public required int AccountId { get; set; }
         [ValidEntityId<Models.Clinic>("Clinics")]
         public required int ClinicId { get; set; }
