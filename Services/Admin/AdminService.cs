@@ -16,6 +16,22 @@ namespace ClinicManagementInternship.Services.Admin
             {
                 var account = await _context.Accounts.FindAsync(CreateDto.AccountId);
                 var admin = await _context.Admins.FirstOrDefaultAsync(a => a.AccountId == CreateDto.AccountId);
+
+                bool isPatient = await _context.Patients.AnyAsync(p => p.AccountId == CreateDto.AccountId);
+                bool isDoctor = await _context.Biochemists.AnyAsync(d => d.AccountId == CreateDto.AccountId);
+                bool isBiochemist = await _context.Biochemists.AnyAsync(d => d.AccountId == CreateDto.AccountId);
+                bool isAdmin = await _context.Admins.AnyAsync(d => d.AccountId == CreateDto.AccountId);
+
+                if (isPatient || isDoctor || isBiochemist || isAdmin)
+                {
+                    return new ServiceResult<Models.Admin>
+                    {
+                        Success = false,
+                        ErrorMessage = "User is already registered as a patient, doctor or biochemist!",
+                        StatusCode = 400
+                    };
+                }
+
                 if (account is not null && admin is null)
                 {
                     var response = await base.CreateNew(CreateDto);

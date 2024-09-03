@@ -2,6 +2,7 @@
 using ClinicManagementInternship.Dto.Patient;
 using ClinicManagementInternship.Templates;
 using ClinicManagementInternship.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagementInternship.Services.Patient
 {
@@ -20,6 +21,20 @@ namespace ClinicManagementInternship.Services.Patient
                     {
                         Success = false,
                         ErrorMessage = "Account doesn't exist",
+                        StatusCode = 400
+                    };
+                }
+                bool isPatient = await _context.Patients.AnyAsync(p => p.AccountId == createDto.AccountId);
+                bool isDoctor = await _context.Biochemists.AnyAsync(d => d.AccountId == createDto.AccountId);
+                bool isBiochemist = await _context.Biochemists.AnyAsync(d => d.AccountId == createDto.AccountId);
+                bool isAdmin = await _context.Admins.AnyAsync(d => d.AccountId == createDto.AccountId);
+
+                if (isPatient || isDoctor || isBiochemist || isAdmin)
+                {
+                    return new ServiceResult<Models.Patient>
+                    {
+                        Success = false,
+                        ErrorMessage = "User is already registered as a patient, doctor or biochemist!",
                         StatusCode = 400
                     };
                 }

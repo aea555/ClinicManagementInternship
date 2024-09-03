@@ -18,8 +18,9 @@ namespace ClinicManagementInternship.Services.Biochemist
                 bool isPatient = await _context.Patients.AnyAsync(p => p.AccountId == CreateDto.AccountId);
                 bool isDoctor = await _context.Biochemists.AnyAsync(d => d.AccountId == CreateDto.AccountId);
                 bool isBiochemist = await _context.Biochemists.AnyAsync(d => d.AccountId == CreateDto.AccountId);
+                bool isAdmin = await _context.Admins.AnyAsync(d => d.AccountId == CreateDto.AccountId);
 
-                if (isPatient || isDoctor || isBiochemist)
+                if (isPatient || isDoctor || isBiochemist || isAdmin)
                 {
                     return new ServiceResult<Models.Biochemist>
                     {
