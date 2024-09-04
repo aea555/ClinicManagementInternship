@@ -39,13 +39,5 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.Update(UpdateDto);
             return HandleResponse(response);
         }
-
-        //[HttpDelete("{id}")]
-        //[Authorize(Roles = "ADMIN,DOCTOR")]
-        //public override async Task<ActionResult<ServiceResult<string>>> DeleteById(int id)
-        //{
-        //    var response = await _service.DeleteById(id);
-        //    return HandleResponse(response);
-        //}
     }
 }

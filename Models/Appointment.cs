@@ -1,23 +1,18 @@
 ﻿using ClinicManagementInternship.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace ClinicManagementInternship.Models
 {
-    public class Appointment
+    public class Appointment : ModelBase
     {
-        [Key]
-        public int Id { get; set; }
         public required int ClinicId { get; set; }
         public Clinic? Clinic { get; set; }
         public required int DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
         public required int PatientId { get; set; }
         public Patient? Patient { get; set; }
-        public AppointmentStatus AppointmentStatus { get; set; }
+        public AppointmentStatus AppointmentStatus { get; set; } = AppointmentStatus.APPROVED;
         public required DateTime StartTime { get; set; }
-        public required DateTime FinishTime { get; set; }
-        public DateTime CompleteTime { get; set; }
+        public DateTime? FinishTime { get; set; }
         public string? Notes { get; set; }
-
     }
 }

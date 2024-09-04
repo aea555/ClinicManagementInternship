@@ -44,7 +44,7 @@ namespace ClinicManagementInternship.Templates
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "ADMIN")]
-        public async virtual Task<ActionResult<ServiceResult<string>>> DeleteById(int id)
+        public async virtual Task<ActionResult<ServiceResult<TClass>>> DeleteById(int id)
         {
             var response = await _service.DeleteById(id);
             return HandleResponse(response);

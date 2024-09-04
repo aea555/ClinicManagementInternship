@@ -8,7 +8,6 @@ namespace ClinicManagementInternship.Dto.AppointmentTestResult
     {
         [ValidEntityId<Models.AppointmentTest>("AppointmentTests")]
         public required int AppointmentTestId { get; set; }
-        public required DateTime ResultDate { get; set; }
         public required decimal Value { get; set; }
         [ValidEntityId<Models.Biochemist>("Biochemists")]
         public required int BiochemistId { get; set; }

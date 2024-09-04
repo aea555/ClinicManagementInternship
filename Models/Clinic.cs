@@ -1,16 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ClinicManagementInternship.Models
+﻿namespace ClinicManagementInternship.Models
 {
-    public class Clinic
+    public class Clinic : ModelBase
     {
-        [Key]
-        public int Id { get; set; }
         public required string Name { get; set; }
         public required string Address { get; set; }
-        public required int OpenTime { get; set; }
-        public required int CloseTime { get; set; }
-        public required int BreakStartTime { get; set; }
-        public required int BreakEndTime { get; set; }
+        public required TimeOnly OpenTime { get; set; }
+        public required TimeOnly CloseTime { get; set; }
+        public required TimeOnly BreakStartTime { get; set; }
+        public required TimeOnly BreakEndTime { get; set; }
     }
 }

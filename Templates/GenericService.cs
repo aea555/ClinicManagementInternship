@@ -1,11 +1,12 @@
-﻿using ClinicManagementInternship.Utils;
+﻿using ClinicManagementInternship.Models;
+using ClinicManagementInternship.Utils;
 
 namespace ClinicManagementInternship.Templates
 {
     public class GenericService<TCreateDto, TUpdateDto, TEntity>(IGenericRepository<TEntity> repository) : IGenericService<TCreateDto, TUpdateDto, TEntity>
     where TCreateDto : GenericDTO
     where TUpdateDto : GenericUpdateDTO
-    where TEntity : class
+    where TEntity : ModelBase
     {
         private readonly IGenericRepository<TEntity> _repository = repository;
 
@@ -86,6 +87,8 @@ namespace ClinicManagementInternship.Templates
 
                 GenericService<TCreateDto, TUpdateDto, TEntity>.MapUpdateDtoToEntity(updateDto, entity);
 
+                entity.UpdatedAt = DateTime.UtcNow;
+
                 var result = await _repository.UpdateAsync(entity);
 
                 return new ServiceResult<TEntity>
@@ -105,14 +108,14 @@ namespace ClinicManagementInternship.Templates
             }
         }
 
-        public virtual async Task<ServiceResult<string>> DeleteById(int id)
+        public virtual async Task<ServiceResult<TEntity>> DeleteById(int id)
         {
             try
             {
-                var success = await _repository.DeleteAsync(id);
-                if (!success)
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
                 {
-                    return new ServiceResult<string>
+                    return new ServiceResult<TEntity>
                     {
                         Success = false,
                         ErrorMessage = $"{typeof(TEntity).Name} not found.",
@@ -120,7 +123,12 @@ namespace ClinicManagementInternship.Templates
                     };
                 }
 
-                return new ServiceResult<string>
+                entity.UpdatedAt = DateTime.UtcNow;
+                entity.IsDeleted = true;
+
+                var result = await _repository.UpdateAsync(entity);
+
+                return new ServiceResult<TEntity>
                 {
                     Success = true,
                     Message = $"{typeof(TEntity).Name} with ID {id} deleted successfully."
@@ -128,7 +136,7 @@ namespace ClinicManagementInternship.Templates
             }
             catch (Exception e)
             {
-                return new ServiceResult<string>
+                return new ServiceResult<TEntity>
                 {
                     Success = false,
                     ErrorMessage = "An unexpected error occurred. During deleting " + nameof(TEntity) + " caused by: " + e.Message,

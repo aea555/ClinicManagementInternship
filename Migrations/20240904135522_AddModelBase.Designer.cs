@@ -3,6 +3,7 @@ using System;
 using ClinicManagementInternship.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ClinicManagementInternship.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240904135522_AddModelBase")]
+    partial class AddModelBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,15 +306,6 @@ namespace ClinicManagementInternship.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<TimeOnly>("BreakEndTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<TimeOnly>("BreakStartTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<TimeOnly>("CloseTime")
-                        .HasColumnType("time without time zone");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -321,9 +315,6 @@ namespace ClinicManagementInternship.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<TimeOnly>("OpenTime")
-                        .HasColumnType("time without time zone");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

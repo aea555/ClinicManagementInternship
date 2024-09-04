@@ -9,7 +9,7 @@ namespace ClinicManagementInternship.Templates
         Task<ServiceResult<TClass>> GetById(int id);
         Task<ServiceResult<TClass>> CreateNew(TCreateDto createDto);
         Task<ServiceResult<TClass>> Update(TUpdateDto updateDto);
-        Task<ServiceResult<string>> DeleteById(int id);
+        Task<ServiceResult<TClass>> DeleteById(int id);
         Task<ServiceResult<List<TClass>>> GetAll();
     }
 }

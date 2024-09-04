@@ -1,13 +1,13 @@
 ﻿using ClinicManagementInternship.Data;
+using ClinicManagementInternship.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace ClinicManagementInternship.Templates
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : ModelBase
     {
         private readonly DataContext _context;
-        private DataContext context;
 
         public GenericRepository(DataContext context)
         {
@@ -16,7 +16,7 @@ namespace ClinicManagementInternship.Templates
 
         public async Task<TEntity> GetByIdAsync(int id)
         {
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
         }
 
         public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -26,7 +26,7 @@ namespace ClinicManagementInternship.Templates
 
         public async Task<List<TEntity>> GetAllAsync()
         {
-            return await _context.Set<TEntity>().ToListAsync();
+            return await _context.Set<TEntity>().Where(e => !e.IsDeleted).ToListAsync();
         }
 
         public async Task<TEntity> CreateAsync(TEntity entity)

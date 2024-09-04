@@ -1,12 +1,9 @@
 ﻿using ClinicManagementInternship.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace ClinicManagementInternship.Models
 {
-    public class Account
+    public class Account : ModelBase
     {
-        [Key]
-        public int Id { get; set; }
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
         public required GenderEnum Gender { get; set; }

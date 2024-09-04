@@ -5,7 +5,7 @@ namespace ClinicManagementInternship.Dto.Appointment
 {
     public class UpdateAppointment : GenericUpdateDTO
     {
-        public DateTime? CompleteTime { get; set; }
+        public DateTime? FinishTime { get; set; }
         public string? Notes { get; set; }
         public AppointmentStatus? AppointmentStatus { get; set; }
     }

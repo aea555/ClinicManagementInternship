@@ -54,6 +54,7 @@ namespace ClinicManagementInternship.Services.Doctor
                 {
                     existingDoctor.FirstName = FirstName ?? existingDoctor.FirstName;
                     existingDoctor.LastName = LastName ?? existingDoctor.LastName;
+                    existingDoctor.UpdatedAt = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
                     return new ServiceResult<Models.Doctor>
                     {

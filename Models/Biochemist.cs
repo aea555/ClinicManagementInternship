@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace ClinicManagementInternship.Models
 {
-    public class Biochemist
+    public class Biochemist : ModelBase
     {
-        [Key]
-        public int Id { get; set; }
         public required int AccountId { get; set; }
         [JsonIgnore]
         public Account? Account { get; set; }

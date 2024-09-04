@@ -6,8 +6,10 @@ namespace ClinicManagementInternship.Dto.Test
     {
         public string? Name { get; set; }
         public string? UnitType { get; set; }
-        public decimal? RangeStart { get; set; }
-        public decimal? RangeEnd { get; set; }
+        public decimal? RangeStartMale { get; set; }
+        public decimal? RangeEndMale { get; set; }
+        public decimal? RangeStartFemale { get; set; }
+        public decimal? RangeEndFemale { get; set; }
         public string? Desc { get; set; }
     }
 }

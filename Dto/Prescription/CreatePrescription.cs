@@ -11,7 +11,6 @@ namespace ClinicManagementInternship.Dto.Prescription
         public required int PatientId { get; set; }
         [ValidEntityId<Models.Appointment>("Appointments")]
         public required int AppointmentId { get; set; }
-        public required DateTime Date { get; set; }
         public required int DurationDays { get; set; }
         public string? Notes { get; set; }
     }

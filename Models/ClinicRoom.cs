@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ClinicManagementInternship.Models
+﻿namespace ClinicManagementInternship.Models
 {
-    public class ClinicRoom
+    public class ClinicRoom : ModelBase
     {
-        [Key]
-        public int Id { get; set; }
         public required int ClinicId { get; set; }
         public Clinic? Clinic { get; set; }
         public required int Number { get; set; }
