@@ -53,5 +53,57 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.GetRequestsOfAccount(dto);
             return HandleResponse(response);
         }
+
+        [HttpGet("/api/GetAppointmentsOfAccount/{accountId}")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<List<Models.Appointment>>>> GetAppointmentsOfAccount(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetAppointmentsOfAccount(accountId);
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/GetPrescriptionsOfAccount/{accountId}")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<List<Models.Prescription>>>> GetPrescriptionsOfAccount(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetPrescriptionsOfAccount(accountId);
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/GetTestResultsOfAccount/{accountId}")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<List<Models.AppointmentTestResult>>>> GetTestResultsOfAccount(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetTestResultsOfAccount(accountId);
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/GetInjectionsOfAccount/{accountId}")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<List<Models.Injection>>>> GetInjectionsOfAccount(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetInjectionsOfAccount(accountId);
+            return HandleResponse(response);
+        }
     }
 }

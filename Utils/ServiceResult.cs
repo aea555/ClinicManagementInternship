@@ -7,5 +7,6 @@
         public string Message { get; set; } = string.Empty;
         public int StatusCode { get; set; }
         public T? Data { get; set; }
+        public object? ExtraData { get; set; }
     }
 }

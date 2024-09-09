@@ -1,4 +1,5 @@
 ﻿using ClinicManagementInternship.Dto.Appointment;
+using ClinicManagementInternship.Models;
 using ClinicManagementInternship.Services.Appointment;
 using ClinicManagementInternship.Templates;
 using ClinicManagementInternship.Utils;
@@ -26,7 +27,20 @@ namespace ClinicManagementInternship.Controllers
             return HandleResponse(response);
         }
 
-        [HttpDelete("/api/Appointment/Cancel/{id}")]
+        [HttpPost("/api/Appointment/CreateWithAccountId")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<Models.Appointment>>> CreateWithAccountId([FromBody] CreateAppointmentAccountId CreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.CreateWithAccountId(CreateDto);
+            return HandleResponse(response);
+        }
+
+        [HttpPut("/api/Appointment/Cancel/{id}")]
         [Authorize(Roles = "ADMIN,PATIENT")]
         public async Task<ActionResult<ServiceResult<Models.Appointment>>> Cancel(int id)
         {
@@ -44,6 +58,19 @@ namespace ClinicManagementInternship.Controllers
             }
 
             var response = await _service.Update(UpdateDto);
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/Appointment/GetPossibleAppointments/{clinicId}")]
+        [Authorize(Roles = "ADMIN,PATIENT")]
+        public async Task<ActionResult<ServiceResult<List<PossibleAppointments>>>> GetPossibleAppointments(int clinicId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetFreeAppointmentsOfToday(clinicId);
             return HandleResponse(response);
         }
     }
