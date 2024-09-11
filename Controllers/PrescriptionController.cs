@@ -27,6 +27,19 @@ namespace ClinicManagementInternship.Controllers
             return HandleResponse(response);
         }
 
+        [HttpPost("/api/Prescription/CreateWithAccountId")]
+        [Authorize(Roles = "ADMIN,DOCTOR")]
+        public async Task<ActionResult<ServiceResult<Prescription>>> CreateWithAccountId([FromBody] CreatePrescriptionAccountId CreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.CreateWithAccountId(CreateDto);
+            return HandleResponse(response);
+        }
+
         [HttpPut]
         [Authorize(Roles = "ADMIN,DOCTOR")]
         public override async Task<ActionResult<ServiceResult<Prescription>>> Update([FromBody] UpdatePrescription UpdateDto)

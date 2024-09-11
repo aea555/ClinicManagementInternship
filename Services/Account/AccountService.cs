@@ -350,5 +350,74 @@ namespace ClinicManagementInternship.Services.Account
             }
         }
 
+        public async Task<ServiceResult<List<Models.Appointment>>> GetUpcomingAppointments(int accountId)
+        {
+            try
+            {
+                var existingAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+                if (existingAccount is null)
+                {
+                    return new ServiceResult<List<Models.Appointment>>
+                    {
+                        Success = false,
+                        ErrorMessage = "Account doesn't exist.",
+                        StatusCode = 400
+                    };
+                }
+
+                var doctor = await _context.Doctors.FirstOrDefaultAsync(d => d.AccountId == accountId);
+
+                if (doctor is null)
+                {
+                    return new ServiceResult<List<Models.Appointment>>
+                    {
+                        Success = false,
+                        ErrorMessage = "Doctor doesn't exist.",
+                        StatusCode = 400
+                    };
+                }
+
+
+                var appointments = await _context.Appointments
+                    .Include(a => a.Patient)
+                    .Where
+                    (
+                        a => a.DoctorId == doctor.Id && a.StartTime.ToUniversalTime() > DateTime.Now.ToUniversalTime() &&
+                        !a.IsDeleted &&
+                        (a.AppointmentStatus != Enums.AppointmentStatus.CANCELLED || a.AppointmentStatus != Enums.AppointmentStatus.COMPLETED || a.AppointmentStatus != Enums.AppointmentStatus.PATIENT_ABSENT)
+                    )
+                    .Select
+                    (
+                        a => new
+                        {
+                            a.Id,
+                            a.Patient.FirstName,
+                            a.Patient.LastName,
+                            a.StartTime,
+                            a.CreatedAt,
+                        }
+                    )
+                    .ToListAsync();
+
+
+                return new ServiceResult<List<Models.Appointment>>
+                {
+                    Success = true,
+                    Message = "Upcoming appointments found",
+                    ExtraData = appointments,
+                    StatusCode = 400
+                };
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<List<Models.Appointment>>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
+
     }
 }

@@ -27,6 +27,19 @@ namespace ClinicManagementInternship.Controllers
             return HandleResponse(response);
         }
 
+        [HttpPost("/api/AppointmentTestResult/CreateWithAccountId")]
+        [Authorize(Roles = "ADMIN,BIOCHEMIST")]
+        public async Task<ActionResult<ServiceResult<AppointmentTestResult>>> CreateWithAccountId([FromBody] CreateAppointmentTestResultAccountId CreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.CreateWithAccountId(CreateDto);
+            return HandleResponse(response);
+        }
+
         [HttpPut]
         [Authorize(Roles = "ADMIN,BIOCHEMIST")]
         public override async Task<ActionResult<ServiceResult<AppointmentTestResult>>> Update([FromBody] UpdateAppointmentTestResult UpdateDto)

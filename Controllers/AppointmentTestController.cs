@@ -39,5 +39,31 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.Update(UpdateDto);
             return HandleResponse(response);
         }
+
+        [HttpGet("/api/AppointmentTest/GetPending")]
+        [Authorize(Roles = "ADMIN,DOCTOR,BIOCHEMIST")]
+        public async Task<ActionResult<ServiceResult<List<AppointmentTest>>>> GetPendingTestResults()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetPendingTestResults();
+            return HandleResponse(response);
+        }
+
+        [HttpGet("/api/AppointmentTest/GetTestResultsOfAppointment/{appointmentId}")]
+        [Authorize(Roles = "ADMIN,DOCTOR")]
+        public async Task<ActionResult<ServiceResult<List<AppointmentTest>>>> GetTestResultsOfAppointment(int appointmentId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetTestResultsOfAppointment(appointmentId);
+            return HandleResponse(response);
+        }
     }
 }

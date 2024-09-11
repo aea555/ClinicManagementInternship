@@ -120,9 +120,7 @@ namespace ClinicManagementInternship.Services.Appointment
                     }
 
                     var existingAppointment = await _context.Appointments
-                        .Include(i => i.Doctor)
-                        .Include(i => i.Clinic)
-                        .FirstOrDefaultAsync(a => a.StartTime == slot && a.DoctorId == doctor.Id);
+                        .FirstOrDefaultAsync(a => a.StartTime == slot && a.DoctorId == doctor.Id && !a.IsDeleted);
 
                     if (existingAppointment is null)
                     {
@@ -139,7 +137,7 @@ namespace ClinicManagementInternship.Services.Appointment
                 }
             }
         }
-        //
+
         public async Task<ServiceResult<Models.Appointment>> CreateWithAccountId(CreateAppointmentAccountId CreateDto)
         {
             try

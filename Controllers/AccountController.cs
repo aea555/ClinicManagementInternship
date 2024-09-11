@@ -105,5 +105,18 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.GetInjectionsOfAccount(accountId);
             return HandleResponse(response);
         }
+
+        [HttpGet("/api/GetUpcomingAppointments/{accountId}")]
+        [Authorize(Roles = "ADMIN,DOCTOR")]
+        public async Task<ActionResult<ServiceResult<List<Models.Appointment>>>> GetUpcomingAppointments(int accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.GetUpcomingAppointments(accountId);
+            return HandleResponse(response);
+        }
     }
 }

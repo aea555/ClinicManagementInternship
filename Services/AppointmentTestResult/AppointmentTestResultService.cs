@@ -33,5 +33,50 @@ namespace ClinicManagementInternship.Services.AppointmentTestResult
                 };
             }
         }
+
+        public async Task<ServiceResult<Models.AppointmentTestResult>> CreateWithAccountId(CreateAppointmentTestResultAccountId CreateDto)
+        {
+            try
+            {
+                var biochemist = await _context.Biochemists.FirstOrDefaultAsync(p => p.AccountId == CreateDto.AccountId);
+                if (biochemist is null)
+                {
+                    return new ServiceResult<Models.AppointmentTestResult>
+                    {
+                        Success = false,
+                        ErrorMessage = "No such biochemist",
+                        StatusCode = 400
+                    };
+                }
+
+                var newAppointmentTestResult = new Models.AppointmentTestResult
+                {
+                    AppointmentTestId = CreateDto.AppointmentTestId,
+                    BiochemistId = biochemist.Id,
+                    ResultFlag = CreateDto.ResultFlag,
+                    Value = CreateDto.Value,
+                    ResultDate = DateTime.UtcNow
+                };
+
+                var result = await _context.AppointmentTestResults.AddAsync(newAppointmentTestResult);
+                await _context.SaveChangesAsync();
+
+                return new ServiceResult<Models.AppointmentTestResult>
+                {
+                    Success = true,
+                    Data = newAppointmentTestResult,
+                    StatusCode = 200
+                };
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<Models.AppointmentTestResult>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
     }
 }
