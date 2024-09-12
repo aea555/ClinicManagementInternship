@@ -48,7 +48,42 @@ namespace ClinicManagementInternship.Services.Account
                 };
             }
         }
+        public override async Task<ServiceResult<Models.Account>> Update(UpdateAccount UpdateDto)
+        {
+            try
+            {
+                var existingAccount = await _context.Accounts.FindAsync(UpdateDto.Id);
+                if (existingAccount is null)
+                {
+                    return new ServiceResult<Models.Account>
+                    {
+                        Success = false,
+                        ErrorMessage = "No such account.",
+                        StatusCode = 400
+                    };
+                }
 
+                string HashedPassword = PasswordHash.CreatePasswordHash(UpdateDto.PasswordHash);
+                UpdateDto.PasswordHash = HashedPassword;
+                var account = await base.Update(UpdateDto);
+
+                return new ServiceResult<Models.Account>
+                {
+                    Success = true,
+                    Message = "Account update successful",
+                    StatusCode = 201
+                };
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<Models.Account>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
         public async Task<ServiceResult<SignupRequestsResult>> GetRequestsOfAccount(GetRequestAccountId dto)
         {
             try
@@ -384,7 +419,7 @@ namespace ClinicManagementInternship.Services.Account
                     (
                         a => a.DoctorId == doctor.Id && a.StartTime.ToUniversalTime() > DateTime.Now.ToUniversalTime() &&
                         !a.IsDeleted &&
-                        (a.AppointmentStatus != Enums.AppointmentStatus.CANCELLED || a.AppointmentStatus != Enums.AppointmentStatus.COMPLETED || a.AppointmentStatus != Enums.AppointmentStatus.PATIENT_ABSENT)
+                        (a.AppointmentStatus == Enums.AppointmentStatus.APPROVED)
                     )
                     .Select
                     (
@@ -419,5 +454,79 @@ namespace ClinicManagementInternship.Services.Account
             }
         }
 
+        public async Task<ServiceResult<Models.Account>> ConfirmEmail(int accountId, string email)
+        {
+            try
+            {
+                var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId && a.Email == email);
+                if (account is null)
+                {
+                    return new ServiceResult<Models.Account>
+                    {
+                        Success = false,
+                        ErrorMessage = "Invalid email for account id.",
+                        StatusCode = 400
+                    };
+                }
+                return new ServiceResult<Models.Account>
+                {
+                    Success = true,
+                    Message = "Email correct.",
+                    StatusCode = 200
+                };
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<Models.Account>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
+
+        public async Task<ServiceResult<Models.Account>> ConfirmPassword(int accountId, string password)
+        {
+            try
+            {
+                var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+                if (account is null)
+                {
+                    return new ServiceResult<Models.Account>
+                    {
+                        Success = false,
+                        ErrorMessage = "Invalid email for account id.",
+                        StatusCode = 400
+                    };
+                }
+
+                if (!PasswordHash.ComparePassword(password, account.PasswordHash))
+                {
+                    return new ServiceResult<Models.Account>
+                    {
+                        Success = false,
+                        ErrorMessage = "Password is incorrect.",
+                        StatusCode = 401
+                    };
+                }
+
+                return new ServiceResult<Models.Account>
+                {
+                    Success = true,
+                    Message = "Password correct.",
+                    StatusCode = 200
+                };
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<Models.Account>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
     }
 }

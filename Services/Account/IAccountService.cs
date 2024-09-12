@@ -12,5 +12,7 @@ namespace ClinicManagementInternship.Services.Account
         Task<ServiceResult<List<Models.AppointmentTestResult>>> GetTestResultsOfAccount(int accountId);
         Task<ServiceResult<List<Models.Appointment>>> GetUpcomingAppointments(int accountId);
         Task<ServiceResult<List<Models.Injection>>> GetInjectionsOfAccount(int accountId);
+        Task<ServiceResult<Models.Account>> ConfirmEmail(int accountId, string email);
+        Task<ServiceResult<Models.Account>> ConfirmPassword(int accountId, string password);
     }
 }

@@ -118,5 +118,31 @@ namespace ClinicManagementInternship.Controllers
             var response = await _service.GetUpcomingAppointments(accountId);
             return HandleResponse(response);
         }
+
+        [HttpPost("/api/Account/ConfirmEmail")]
+        [Authorize(Roles = "ADMIN,DOCTOR,PATIENT,BIOCHEMIST,NONE")]
+        public async Task<ActionResult<ServiceResult<Models.Account>>> ConfirmEmail([FromBody] ConfirmEmail CreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.ConfirmEmail(CreateDto.AccountId, CreateDto.Email);
+            return HandleResponse(response);
+        }
+
+        [HttpPost("/api/Account/ConfirmPassword")]
+        [Authorize(Roles = "ADMIN,DOCTOR,PATIENT,BIOCHEMIST,NONE")]
+        public async Task<ActionResult<ServiceResult<Models.Account>>> ConfirmPassword([FromBody] ConfirmPassword CreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _service.ConfirmPassword(CreateDto.AccountId, CreateDto.Password);
+            return HandleResponse(response);
+        }
     }
 }
