@@ -36,5 +36,6 @@ namespace ClinicManagementInternship.Data
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<PrescriptionDrug> PrescriptionDrugs { get; set; }
         public DbSet<Test> Tests { get; set; }
+        public DbSet<SignupConfirmation> SignupConfirmations { get; set; }
     }
 }

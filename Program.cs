@@ -75,6 +75,12 @@ builder.Logging.AddConsole();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMailerSend(options =>
+{
+    options.ApiToken = Environment.GetEnvironmentVariable("MAILERSEND_TOKEN");
+    options.SenderEmail = Environment.GetEnvironmentVariable("MAILERSEND_DOMAIN");
+    options.SenderName = Environment.GetEnvironmentVariable("MAILERSEND_NAME");
+});
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddRateLimiter(options =>
 {
