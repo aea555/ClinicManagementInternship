@@ -66,6 +66,11 @@ namespace ClinicManagementInternship.Controllers
             };
         }
 
+        [HttpGet("test")]
+        public ActionResult Test()
+        {
+            return Ok();
+        }
     }
 
     public class LoginRequest

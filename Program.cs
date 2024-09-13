@@ -21,8 +21,10 @@ using ClinicManagementInternship.Services.Test;
 using ClinicManagementInternship.Templates;
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -69,11 +71,34 @@ builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IPrescriptionDrugService, PrescriptionDrugService>();
 builder.Services.AddScoped<ITestService, TestService>();
 
-
+builder.Logging.AddConsole();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var xForwardedForHeader = context.Request.Headers["X-Forwarded-For"].ToString();
+        var ipAddress = !string.IsNullOrEmpty(xForwardedForHeader)
+            ? xForwardedForHeader.Split(',').FirstOrDefault()?.Trim()
+            : context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        Console.WriteLine($"IP: {ipAddress} - Rate Limiting Applied");
+
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            ipAddress,
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 12,
+            });
+    });
+    options.RejectionStatusCode = 429;
+});
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -95,6 +120,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -103,7 +129,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors(builder =>
 {
@@ -113,6 +139,19 @@ app.UseCors(builder =>
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+app.UseRateLimiter();
+
 app.MapControllers();
 
 app.Run();
+
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Incoming request from IP: {context.Request.Headers["X-Forwarded-For"]} - {context.Connection.RemoteIpAddress}");
+    await next();
+});
