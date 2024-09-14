@@ -105,7 +105,7 @@ namespace ClinicManagementInternship.Services.Account
                     Success = true,
                     Message = "Records found",
                     Data = returnObj,
-                    StatusCode = 400
+                    StatusCode = 200
                 };
             }
             catch (Exception)

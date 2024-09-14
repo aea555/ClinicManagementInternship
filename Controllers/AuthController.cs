@@ -3,6 +3,7 @@ using ClinicManagementInternship.Dto.Auth;
 using ClinicManagementInternship.Models;
 using ClinicManagementInternship.Utils;
 using MailerSend.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -169,6 +170,31 @@ namespace ClinicManagementInternship.Controllers
                     StatusCode = 500
                 };
             }
+        }
+
+        [HttpPost("patientToken/{accountId}")]
+        [Authorize(Roles = "NONE,ADMIN")]
+        public async Task<ServiceResult<string>> GivePatientToken(int accountId)
+        {
+            var account = await _context.Accounts.FindAsync(accountId);
+            if (account == null || account.Role != Enums.AccountRole.PATIENT)
+            {
+                return new ServiceResult<string>
+                {
+                    Success = false,
+                    ErrorMessage = "No such account",
+                    StatusCode = 401
+                };
+            }
+
+            var token = JwtManager.GenerateJwt(account, _configuration);
+
+            return new ServiceResult<string>
+            {
+                Success = true,
+                StatusCode = 200,
+                Data = token
+            };
         }
     }
 
