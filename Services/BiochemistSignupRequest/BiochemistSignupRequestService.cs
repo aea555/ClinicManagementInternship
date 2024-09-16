@@ -1,14 +1,17 @@
 ﻿using ClinicManagementInternship.Data;
 using ClinicManagementInternship.Dto.BiochemistSignupRequest;
+using ClinicManagementInternship.Enums;
 using ClinicManagementInternship.Templates;
 using ClinicManagementInternship.Utils;
+using MailerSend.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagementInternship.Services.BiochemistSignupRequest
 {
-    public class BiochemistSignupRequestService(IGenericRepository<Models.BiochemistSignupRequest> repository, DataContext context) : GenericService<CreateBiochemistSignupRequest, UpdateBiochemistSignupRequest, Models.BiochemistSignupRequest>(repository), IBiochemistSignupRequestService
+    public class BiochemistSignupRequestService(IGenericRepository<Models.BiochemistSignupRequest> repository, DataContext context, MailerSendService mailerSend) : GenericService<CreateBiochemistSignupRequest, UpdateBiochemistSignupRequest, Models.BiochemistSignupRequest>(repository), IBiochemistSignupRequestService
     {
         private readonly DataContext _context = context;
+        private readonly MailerSendService _mailerSend = mailerSend;
 
         public override async Task<ServiceResult<Models.BiochemistSignupRequest>> CreateNew(CreateBiochemistSignupRequest CreateDto)
         {
@@ -81,6 +84,72 @@ namespace ClinicManagementInternship.Services.BiochemistSignupRequest
                     ErrorMessage = "An unexpected error occurred.",
                     StatusCode = 500
                 };
+            }
+        }
+
+        public override async Task<ServiceResult<Models.BiochemistSignupRequest>> Update(UpdateBiochemistSignupRequest UpdateDto)
+        {
+            try
+            {
+                var request = await _context.BiochemistSignupRequests.Include(bsr => bsr.Account).FirstOrDefaultAsync(bsr => bsr.Id == UpdateDto.Id);
+                var to = new List<Recipient>()
+                {
+                    new()
+                    {
+                        Email = request.Account.Email,
+                        Name = "User",
+                        Substitutions = new Dictionary<string, string>()
+                        {
+                            { "var1", "value1"},
+                            { "var2", "value2"}
+                        }
+                    }
+                };
+
+                if (TryGetEmailBody(UpdateDto.SignUpRequest, out string emailBody))
+                {
+                    await _mailerSend.SendMailAsync(
+                        to,
+                        subject: "Başvurunuzun Durumu",
+                        text: null,
+                        html: emailBody
+                    );
+                }
+
+                return await base.Update(UpdateDto);
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<Models.BiochemistSignupRequest>
+                {
+                    Success = false,
+                    ErrorMessage = "An unexpected error occurred.",
+                    StatusCode = 500
+                };
+            }
+        }
+
+        private static bool TryGetEmailBody(SignUpRequestStatus status, out string emailBody)
+        {
+            emailBody = null;
+
+            switch (status)
+            {
+                case SignUpRequestStatus.ACCEPTED:
+                    emailBody = @"
+                <p>Biyokimyager kaydı için oluşturduğunuz başvurunuz onaylandı. Yeni rolünüzle uygulamayı kullanabilmek için sisteme yeniden giriş yapın.
+                Uygulamaya gitmek için <a href='https://client-clinicapp.vercel.app/dashboard'>buraya tıklayın.</a></p>";
+                    return true;
+
+                case SignUpRequestStatus.DENIED:
+                    emailBody = @"
+                <p>Biyokimyager kaydı için oluşturduğunuz başvurunuz reddedildi. Bilgilerinizi gözden geçirip tekrar başvurmayı deneyin.
+                Uygulamaya gitmek için <a href='https://client-clinicapp.vercel.app/dashboard'>buraya tıklayın.</a></p>";
+                    return true;
+
+                case SignUpRequestStatus.PENDING:
+                default:
+                    return false;
             }
         }
     }

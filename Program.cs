@@ -84,7 +84,7 @@ builder.Services.AddMailerSend(options =>
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddRateLimiter(options =>
 {
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    var globalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
     {
         var xForwardedForHeader = context.Request.Headers["X-Forwarded-For"].ToString();
         var ipAddress = !string.IsNullOrEmpty(xForwardedForHeader)
@@ -100,11 +100,29 @@ builder.Services.AddRateLimiter(options =>
                 PermitLimit = 100,
                 Window = TimeSpan.FromMinutes(1),
                 SegmentsPerWindow = 12,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            });
+    });
+    options.GlobalLimiter = globalLimiter;
+    options.AddPolicy<string>("emailLimiter", context =>
+    {
+        var xForwardedForHeader = context.Request.Headers["X-Forwarded-For"].ToString();
+        var ipAddress = !string.IsNullOrEmpty(xForwardedForHeader)
+            ? xForwardedForHeader.Split(',').FirstOrDefault()?.Trim()
+            : context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            ipAddress,
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 2,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 1,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             });
     });
     options.RejectionStatusCode = 429;
 });
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -139,7 +157,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(builder =>
 {
-    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://client-clinicapp.vercel.app/");
 });
 
 app.UseAuthentication();

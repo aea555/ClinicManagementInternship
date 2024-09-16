@@ -5,6 +5,7 @@ using ClinicManagementInternship.Utils;
 using MailerSend.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagementInternship.Controllers
@@ -72,12 +73,14 @@ namespace ClinicManagementInternship.Controllers
         }
 
         [HttpGet("test")]
+        [Authorize(Roles = "ADMIN")]
         public ActionResult Test()
         {
             return Ok();
         }
 
         [HttpPost("send-email")]
+        [EnableRateLimiting("emailLimiter")]
         public async Task<ServiceResult<string>> SendEmail([FromBody] EmailVerification dto, CancellationToken ct)
         {
             try
@@ -104,14 +107,27 @@ namespace ClinicManagementInternship.Controllers
                     var ScEntity = new SignupConfirmation
                     {
                         Email = dto.Email,
-                        Code = confirmationCode
+                        Code = confirmationCode,
+                        ExpiresAt = DateTime.UtcNow.AddMinutes(15)
                     };
 
-                    var result = await _context.SignupConfirmations.AddAsync(ScEntity, ct);
-                    await _context.SaveChangesAsync(ct);
+                    var tenMinutesAgo = DateTime.UtcNow.AddMinutes(-10);
+                    var recentRequest = await _context.SignupConfirmations
+                        .AnyAsync(sc => sc.Email == dto.Email && sc.CreatedAt >= tenMinutesAgo, ct);
+
+                    if (recentRequest)
+                        return new ServiceResult<string>
+                        {
+                            Success = false,
+                            ErrorMessage = "Çok fazla istek gönderildi, daha sonra tekrar deneyin!",
+                            StatusCode = 429
+                        };
 
                     await _mailerSend.SendMailAsync(
                         to, subject: "Doğrulama Kodu", text: "Kayıt için doğrulama kodunuz: " + confirmationCode, cancellationToken: ct);
+
+                    var result = await _context.SignupConfirmations.AddAsync(ScEntity, ct);
+                    await _context.SaveChangesAsync(ct);
 
                     return new ServiceResult<string>
                     {
@@ -142,16 +158,17 @@ namespace ClinicManagementInternship.Controllers
         }
 
         [HttpPost("confirm-code")]
+        [EnableRateLimiting("emailLimiter")]
         public async Task<ServiceResult<string>> ConfirmCode([FromBody] CodeVerificationDto dto)
         {
             try
             {
-                var isValid = await _context.SignupConfirmations.AnyAsync(sc => sc.Email == dto.Email && sc.Code == dto.Code);
+                var isValid = await _context.SignupConfirmations.AnyAsync(sc => sc.Email == dto.Email && sc.Code == dto.Code && DateTime.UtcNow < sc.ExpiresAt);
                 if (!isValid)
                     return new ServiceResult<string>
                     {
                         Success = false,
-                        ErrorMessage = "Code not valid",
+                        ErrorMessage = "Code not valid or expired.",
                         StatusCode = 401
                     };
 
@@ -172,17 +189,37 @@ namespace ClinicManagementInternship.Controllers
             }
         }
 
-        [HttpPost("patientToken/{accountId}")]
+        [HttpPost("generateToken/{accountId}")]
         [Authorize(Roles = "NONE,ADMIN")]
-        public async Task<ServiceResult<string>> GivePatientToken(int accountId)
+        public async Task<ServiceResult<string>> GenerateRoleToken(int accountId, [FromBody] NewTokenReq dto)
         {
-            var account = await _context.Accounts.FindAsync(accountId);
-            if (account == null || account.Role != Enums.AccountRole.PATIENT)
+            if (!Enum.TryParse(dto.Role, true, out Enums.AccountRole requestedRole) ||
+                (requestedRole != Enums.AccountRole.PATIENT &&
+                 requestedRole != Enums.AccountRole.DOCTOR &&
+                 requestedRole != Enums.AccountRole.BIOCHEMIST))
             {
                 return new ServiceResult<string>
                 {
                     Success = false,
-                    ErrorMessage = "No such account",
+                    ErrorMessage = "Invalid role requested.",
+                    StatusCode = 400
+                };
+            }
+
+            Console.WriteLine(requestedRole);
+
+            var account = await _context.Accounts.FindAsync(accountId);
+
+            Console.WriteLine(account.Role);
+
+
+            if (account == null || account.Role != requestedRole)
+            {
+                Console.WriteLine(account == null || account.Role != requestedRole);
+                return new ServiceResult<string>
+                {
+                    Success = false,
+                    ErrorMessage = "No such account or account does not have the requested role.",
                     StatusCode = 401
                 };
             }
@@ -196,6 +233,7 @@ namespace ClinicManagementInternship.Controllers
                 Data = token
             };
         }
+
     }
 
     public class LoginRequest
