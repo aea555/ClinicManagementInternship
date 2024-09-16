@@ -123,6 +123,15 @@ namespace ClinicManagementInternship.Controllers
                             StatusCode = 429
                         };
 
+                    var userAlreadyRegistered = await _context.Accounts.AnyAsync(a => a.Email == dto.Email, cancellationToken: ct);
+                    if (userAlreadyRegistered)
+                        return new ServiceResult<string>
+                        {
+                            Success = false,
+                            ErrorMessage = "Kullanıcı zaten kaydolmuş",
+                            StatusCode = 400
+                        };
+
                     await _mailerSend.SendMailAsync(
                         to, subject: "Doğrulama Kodu", text: "Kayıt için doğrulama kodunuz: " + confirmationCode, cancellationToken: ct);
 
