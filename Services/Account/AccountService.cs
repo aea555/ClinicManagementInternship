@@ -417,9 +417,9 @@ namespace ClinicManagementInternship.Services.Account
                     .Include(a => a.Patient)
                     .Where
                     (
-                        a => a.DoctorId == doctor.Id && a.StartTime.ToUniversalTime() > DateTime.Now.ToUniversalTime() &&
-                        !a.IsDeleted &&
-                        (a.AppointmentStatus == Enums.AppointmentStatus.APPROVED)
+                        a => a.DoctorId == doctor.Id &&
+                        (a.StartTime.ToUniversalTime() > DateTime.Now.ToUniversalTime() || a.AppointmentStatus == Enums.AppointmentStatus.APPROVED)
+                        && !a.IsDeleted
                     )
                     .Select
                     (
